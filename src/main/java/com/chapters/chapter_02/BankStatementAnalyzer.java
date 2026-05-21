@@ -7,18 +7,15 @@ import java.nio.file.Paths;
 import java.time.Month;
 import java.util.List;
 
-public class BankTransactionAnalyzerSimple {
+public class BankStatementAnalyzer {
+    private final String RESOURCES = "src/main/resources/";
 
-    private static final String RESOURCES = "src/main/resources/";
-    private static final String BANK_DATA = "bank-data-simple.csv";
+    public void analyze(final String fileName, final IBankStatementParser bankStatementParser) throws IOException {
 
-    public static void main(final String[] args) throws IOException {
-
-        final Path path = Paths.get(RESOURCES + BANK_DATA);
+        final Path path = Paths.get(RESOURCES + fileName);
         final List<String> lines = Files.readAllLines(path);
 
-        final BankStatementCSVParser bankStatementParser = new BankStatementCSVParser();
-        final List<BankTransaction> bankTransactions = bankStatementParser.parseLinesFromCSV(lines);
+        final List<BankTransaction> bankTransactions = bankStatementParser.parseLinesFrom(lines);
         final BankStatementProcessor bankStatementProcessor = new BankStatementProcessor(bankTransactions);
 
         final double total = bankStatementProcessor.calculateTotalAmount();
