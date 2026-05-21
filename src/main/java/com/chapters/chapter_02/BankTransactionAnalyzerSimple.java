@@ -5,7 +5,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Month;
-import java.util.ArrayList;
 import java.util.List;
 
 public class BankTransactionAnalyzerSimple {
@@ -20,34 +19,21 @@ public class BankTransactionAnalyzerSimple {
 
         final BankStatementCSVParser bankStatementParser = new BankStatementCSVParser();
         final List<BankTransaction> bankTransactions = bankStatementParser.parseLinesFromCSV(lines);
+        final BankStatementProcessor bankStatementProcessor = new BankStatementProcessor(bankTransactions);
 
-        final double total = calculateTotalAmount(bankTransactions);
+        final double total = bankStatementProcessor.calculateTotalAmount();
         System.out.println("The total for all transactions is " + total);
 
-        final Month month = Month.JANUARY;
-        final List<BankTransaction> transactionsInSelectMonth = selectInMonth(bankTransactions, month);
-        System.out.println("Transactions in " + month + ": " + transactionsInSelectMonth);
-    }
+        final Month month1 = Month.JANUARY;
+        final double totalInMonth1 = bankStatementProcessor.calculateTotalInMonth(month1);
+        System.out.println("The total for transactions in " + month1 + ": " + totalInMonth1);
 
-    public static double calculateTotalAmount (final List<BankTransaction> bankTransactions) {
+        final Month month2 = Month.FEBRUARY;
+        final double totalInMonth2 = bankStatementProcessor.calculateTotalInMonth(month2);
+        System.out.println("The total for transactions in " + month2 + ": " + totalInMonth2);
 
-        double total = 0d;
-        for (BankTransaction transaction : bankTransactions) {
-            total += transaction.getAmount();
-        }
-
-        return total;
-    }
-
-    public static List<BankTransaction> selectInMonth (final List<BankTransaction> bankTransactions, Month month) {
-
-        final List<BankTransaction> transactionsInMonth = new ArrayList<>();
-        for (BankTransaction transaction : bankTransactions) {
-            if (transaction.getDate().getMonth() == month) {
-                transactionsInMonth.add(transaction);
-            }
-        }
-
-        return transactionsInMonth;
+        final String category = "Salary";
+        final double totalInCategory = bankStatementProcessor.calculateTotalForCategory(category);
+        System.out.println("The total for transactions in " + category + ": " + totalInCategory);
     }
 }
